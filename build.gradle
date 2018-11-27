@@ -14,20 +14,40 @@ dependencies {
     compile group: 'io.appium', name: 'java-client', version: '5.0.0-BETA8'
 }
 
-task runAllTest(type: Test , dependsOn: ['clean', 'build']) {
-	doLast{
-		String tag= getTags()
-		javaexec {
-			main = "cucumber.api.cli.Main"
-			classpath= sourceSets.test.runtimeClasspath
-			args = [ "-p" , "pretty" , "-p" ,"json: ${reporing.baseDir}/cucumber/cucumber.json","--glue","steps","-t",tags,"${project.projectDir}/src/test/java/features"]
-		}
-	}
+task runInSequence() {
+    doLast {
+        def arglist = ["-p", "pretty", "-p", "json:${reporting.baseDir}/cucumber/cucumber.json", "--glue", "com.camiloribeiro",
+                       "${project.projectDir}/src/main/java/com/camiloribeiro/features"]
+
+        return javaexec {
+            main = "cucumber.api.cli.Main"
+            classpath = sourceSets.main.runtimeClasspath
+            args = arglist
+        }
+        generateReport()
+    }
 }
 
-private String getTags() {
-	def tags = System.getProperty("tags")
-	if(tags != null)
-		return tags;
-	return "~wip"
+def generateReport() {
+    def jsonReports = fileTree(dir: "${reporting.baseDir}/cucumber/").include '**/*.json'.toString()
+    File reportOutputDirectory = new File("${reporting.baseDir}/cucumber");
+
+    List<String> jsonReportFiles = new ArrayList<String>();
+    jsonReports.each { File file ->
+        jsonReportFiles.add("${reporting.baseDir}/cucumber/${file.name}".toString());
+    }
+
+    Configuration configuration = new Configuration(reportOutputDirectory, "cucumber-gradle-parallel");
+    // optional configuration
+    configuration.setParallelTesting(true);
+    configuration.setRunWithJenkins(false);
+    configuration.setBuildNumber("1988");
+
+    ReportBuilder reportBuilder = new ReportBuilder(jsonReportFiles, configuration);
+    Reportable result = reportBuilder.generateReports();
+    println("\nReport available on: ${reporting.baseDir}/cucumber/cucumber-html-reports/overview-features.html")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.10' //we want gradle 2.10 to run this project
 }
