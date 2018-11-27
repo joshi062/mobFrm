@@ -1,7 +1,7 @@
 Feature: EriBank Login
 
-  Background: Init Appium server
-
+ 
+  @search
   Scenario: login with valid credentials into EriBank Application
     Given User is on the login page
     And User enters Credentials to LogIn
