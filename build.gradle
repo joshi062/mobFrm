@@ -1,0 +1,21 @@
+
+group 'com.testAutomation'
+version '1.0-SNAPSHOT'
+apply plugin: 'java'
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'info.cukes', name: 'cucumber-java', version: '1.2.5'
+    compile group: 'io.appium', name: 'java-client', version: '5.0.0-BETA8'
+    // https://mvnrepository.com/artifact/com.github.SrinivasanTarget/DeviceManager
+    compile group: 'com.github.SrinivasanTarget', name: 'DeviceManager', version: '2fa96e0'
+    // https://mvnrepository.com/artifact/com.thoughtworks.xstream/xstream
+    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.11.1'
+
+
+}
