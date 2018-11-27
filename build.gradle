@@ -11,22 +11,45 @@ apply plugin: 'idea'
 apply plugin: 'maven'
 sourceCompatibility = 1.5
 
-repositories {
-     maven {
-        url "http://repo.bodar.com"
+buildscript {
+    repositories {
+        maven {
+            url "http://repo.bodar.com"
+        }
+        mavenCentral()
     }
-      mavenCentral()
-}
-dependencies {
+
+    dependencies {
         classpath "org.codehaus.gpars:gpars:1.2.1",
                 "net.masterthought:cucumber-reporting:3.5.1"
     }
+}
+
+
+repositories {
+    maven {
+        url "http://repo.bodar.com"
+    }
+    mavenCentral()
+
+}
+task runInParallel {
+    doLast {
+        def testProperties = "-DsomePropertie=somePropertie"
+        runCucumberTests(testProperties, "~@pending")
+    }
+}
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'info.cukes', name: 'cucumber-java', version: '1.2.5'
     compile group: 'io.appium', name: 'java-client', version: '5.0.0-BETA8'
       compile group: 'net.masterthought', name: 'cucumber-reporting', version: "3.5.1"
     compile group: 'com.googlecode.totallylazy', name: 'totallylazy', version: '1.85'
+       compile(
+            "org.codehaus.groovy:groovy-all:2.4.7"
+    )
+
+    compile files("$buildDir/classes/main")
 }
 
 task runInSequence() {
